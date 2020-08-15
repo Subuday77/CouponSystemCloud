@@ -336,8 +336,8 @@ public class AdminController {
 	
 	@GetMapping("/getfile")
 	public ResponseEntity<?> getFile() throws IOException {
-	//	String fileName = "Face.png";
-		String fileName = "mageiras_sbo.xlsx";
+		String fileName = "Face.png";
+		//String fileName = "mageiras_sbo.xlsx";
 		File file = new File("Files\\" + fileName);
 		if (file.exists()) {
 			Path path = Paths.get(file.getAbsolutePath());
