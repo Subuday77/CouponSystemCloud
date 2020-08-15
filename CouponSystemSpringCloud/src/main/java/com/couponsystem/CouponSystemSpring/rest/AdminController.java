@@ -1,5 +1,10 @@
 package com.couponsystem.CouponSystemSpring.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,7 +12,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -324,6 +332,32 @@ public class AdminController {
 		}
 		help.updateTimestamp(token);
 		return new ResponseEntity<String>("There were no outdated coupons", HttpStatus.GONE);
+	}
+	
+	@GetMapping("/getfile")
+	public ResponseEntity<?> getFile() throws IOException {
+	//	String fileName = "Face.png";
+		String fileName = "mageiras_sbo.xlsx";
+		File file = new File("Files\\" + fileName);
+		if (file.exists()) {
+			Path path = Paths.get(file.getAbsolutePath());
+
+			ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+			HttpHeaders headers = new HttpHeaders();
+			
+			if (file.getAbsolutePath().endsWith("xlsx")) {
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+				return ResponseEntity.ok().headers(headers).contentLength(file.length())
+						.contentType(MediaType
+								.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+						.body(resource);
+			} else if (file.getAbsolutePath().endsWith("png")) {
+				headers.add(HttpHeaders.CONTENT_DISPOSITION, "filename=" + fileName);
+				return ResponseEntity.ok().headers(headers).contentLength(file.length())
+						.contentType(MediaType.IMAGE_PNG).body(resource);
+			}
+		}
+		return new ResponseEntity<String>("File not found", HttpStatus.NOT_FOUND);
 	}
 
 }
