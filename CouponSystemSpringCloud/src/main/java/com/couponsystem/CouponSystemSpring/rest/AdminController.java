@@ -357,7 +357,7 @@ public class AdminController {
 						.contentType(MediaType.IMAGE_PNG).body(resource);
 			}
 		}
-		return new ResponseEntity<String>("File not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<String>(String.valueOf(file.getAbsolutePath()), HttpStatus.NOT_FOUND);
 	}
 
 }
